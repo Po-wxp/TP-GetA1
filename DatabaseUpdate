@@ -1,0 +1,34 @@
+public void updateData() {
+		String url = "jdbc:postgresql://127.0.0.1";
+		String username = "postgres";
+		String password = "wxp339762";
+		String sql = "INSERT INTO TOPTRUMPS VALUES (?,?,?,?,?,?)";
+		String query = "SELECT MAX(GAMEID) FROM TOPTRUMPS";
+		PreparedStatement  statement;
+		PreparedStatement  statement2;
+		Connection connection;
+//		System.out.print("connect1");
+		try {
+			Class.forName("org.postgresql.Driver");
+			connection = DriverManager.getConnection(url,username,password);
+            statement2 = (PreparedStatement) connection.prepareStatement(query);
+            ResultSet rs = statement2.executeQuery();
+            int gameID =1;
+            if(rs.next()) gameID = rs.getInt(1)+1;
+            
+			for(int i=0;i<playerList.size();i++) {
+				statement = (PreparedStatement) connection.prepareStatement(sql);
+				statement.setInt(1, gameID);
+				statement.setString(2,playerList.get(i).getPlayerName());
+				statement.setInt(3, numberOfDraws);
+				statement.setBoolean(4,i == finalWinnerIndex);
+				statement.setInt(5, round);
+				statement.setInt(6, playerList.get(i).getWinTimes());
+				statement.execute();
+			}
+			connection.close();
+			} catch (Exception e) {
+			e.printStackTrace();
+			}
+	}
+		
